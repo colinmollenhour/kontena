@@ -14,11 +14,9 @@ module Kontena::Cli::Services
     option "--since", "SINCE", "Show logs since given timestamp"
     option ["-i", "--instance"], "INSTANCE", "Show only given instance specific logs"
 
+    requires_current_master_token
+
     def execute
-      require_api_url
-      token = require_token
-
-
       query_params = {}
       query_params[:limit] = lines if lines
       query_params[:since] = since if since
@@ -27,9 +25,9 @@ module Kontena::Cli::Services
       if tail?
         @buffer = ''
         query_params[:follow] = 1
-        stream_logs(token, query_params)
+        stream_logs(query_params)
       else
-        list_logs(token, query_params)
+        list_logs(query_params)
       end
 
     end
@@ -42,16 +40,15 @@ module Kontena::Cli::Services
       puts "#{prefix} #{log['data']}"
     end
 
-    def list_logs(token, query_params)
-      result = client(token).get("services/#{current_grid}/#{name}/container_logs", query_params)
+    def list_logs(query_params)
+      result = client.get("services/#{current_grid}/#{name}/container_logs", query_params)
       result['logs'].each do |log|
         render_log_line(log)
       end
     end
 
-    # @param [String] token
     # @param [Hash] query_params
-    def stream_logs(token, query_params)
+    def stream_logs(query_params)
       last_seen = nil
       streamer = lambda do |chunk, remaining_bytes, total_bytes|
         log = buffered_log_json(chunk)
@@ -66,7 +63,7 @@ module Kontena::Cli::Services
         if last_seen
           query_params[:from] = last_seen
         end
-        result = client(token).get_stream(
+        result = client.get_stream(
           "services/#{current_grid}/#{name}/container_logs", streamer, query_params
         )
       rescue => exc

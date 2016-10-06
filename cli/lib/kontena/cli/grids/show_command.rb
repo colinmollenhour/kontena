@@ -7,9 +7,9 @@ module Kontena::Cli::Grids
 
     parameter "NAME", "Grid name"
 
-    def execute
-      require_api_url
+    requires_current_master_token
 
+    def execute
       grid = find_grid_by_name(name)
       exit_with_error("Grid not found") unless grid
 

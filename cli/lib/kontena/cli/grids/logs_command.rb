@@ -4,6 +4,7 @@ module Kontena::Cli::Grids
   class LogsCommand < Kontena::Command
     include Kontena::Cli::Common
     include Kontena::Cli::Helpers::LogHelper
+    include Kontena::Cli::GridOptions
 
     option ["-t", "--tail"], :flag, "Tail (follow) logs", default: false
     option "--lines", "LINES", "Number of lines to show from the end of the logs"
@@ -12,13 +13,9 @@ module Kontena::Cli::Grids
     option "--service", "SERVICE", "Filter by service name", multivalued: true
     option ["-c", "--container"], "CONTAINER", "Filter by container", multivalued: true
 
-    # @return [String]
-    def token
-      @token ||= require_token
-    end
+    requires_current_master_token
 
     def execute
-      require_api_url
 
       query_params = {}
       query_params[:nodes] = node_list.join(",") unless node_list.empty?
@@ -35,7 +32,7 @@ module Kontena::Cli::Grids
     end
 
     def list_logs(query_params)
-      result = client(token).get("grids/#{current_grid}/container_logs", query_params)
+      result = client.get("grids/#{current_grid}/container_logs", query_params)
       result['logs'].each do |log|
         color = color_for_container(log['name'])
         prefix = ""
@@ -46,7 +43,6 @@ module Kontena::Cli::Grids
       end
     end
 
-    # @param [String] token
     # @param [Hash] query_params
     def tail_logs(query_params)
       stream_logs("grids/#{current_grid}/container_logs", query_params) do |log|

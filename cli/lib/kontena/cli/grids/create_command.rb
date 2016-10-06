@@ -10,20 +10,25 @@ module Kontena::Cli::Grids
     option "--initial-size", "INITIAL_SIZE", "Initial grid size (number of nodes)", default: 1
     option "--silent", :flag, "Reduce output verbosity"
 
-    def execute
-      require_api_url
+    requires_current_master_token
 
-      token = require_token
+    def execute
       payload = {
         name: name
       }
+      begin
+        if client.get("grids/#{self.name}")
+          abort pastel.red("Grid '#{self.name}' already exists")
+        end
+      rescue Kontena::Errors::StandardError
+      end
       payload[:initial_size] = initial_size if initial_size
       grid = nil
       if initial_size == 1
         warning "Option --initial-size=1 is only recommended for test/dev usage" unless running_silent?
       end
       spinner "Creating #{pastel.cyan(name)} grid " do
-        grid = client(token).post('grids', payload)
+        grid = client.post('grids', payload)
       end
       if grid
         spinner "Switching scope to #{pastel.cyan(name)} grid " do

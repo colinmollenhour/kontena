@@ -17,6 +17,18 @@ module Kontena::Cli::Master
     option ['-f', '--force'], :flag, 'Force reauthentication'
     option ['-s', '--silent'], :flag, 'Reduce output verbosity'
 
+    def default_name
+      if config.find_server('kontena-master')
+        counter = 1
+        until config.find_server("kontena_master-#{counter}").nil?
+          counter += 1
+        end
+        "kontena-master-#{counter}"
+      else
+        "kontena-master"
+      end
+    end
+
     def execute
       # rewrites self.url
       use_current_master_if_available || use_master_by_name

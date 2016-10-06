@@ -8,10 +8,10 @@ module Kontena::Cli::Grids
     option ['-u', '--use'], :flag, 'Automatically use first available grid sorted by user count', hidden: true
     option ['-v', '--verbose'], :flag, 'Use a more verbose output', hidden: true
 
-    def execute
-      require_api_url
+    requires_current_master_token
 
-      vputs
+    def execute
+      vputs # output an empty line when verbose
 
       gridlist = []
 

@@ -16,7 +16,7 @@ module Kontena::Cli::Helpers
       begin
         query_params[:follow] = 1
         query_params[:from] = last_seen if last_seen
-        result = client(token).get_stream(url, streamer, query_params)
+        result = client.get_stream(url, streamer, query_params)
       rescue => exc
         retry if exc.cause.is_a?(EOFError) # Excon wraps the EOFerror into SocketError
         raise

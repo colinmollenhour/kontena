@@ -85,7 +85,7 @@ module Kontena::Cli::Apps
     # @param [String] name
     # @return [Boolean]
     def service_exists?(name)
-      get_service(token, prefixed_name(name)) rescue false
+      get_service(prefixed_name(name)) rescue false
     end
 
     # @param [Hash] services

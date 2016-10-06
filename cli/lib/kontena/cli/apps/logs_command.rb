@@ -48,7 +48,7 @@ module Kontena::Cli::Apps
     end
 
     def show_logs(services, query_params)
-      result = client(token).get("grids/#{current_grid}/container_logs", query_params)
+      result = client.get("grids/#{current_grid}/container_logs", query_params)
       result['logs'].each do |log|
         show_log(log)
       end
