@@ -1,10 +1,8 @@
-require_relative 'containers/exec_command'
-require_relative 'containers/inspect_command'
 
 class Kontena::Cli::ContainerCommand < Kontena::Command
 
-  subcommand "exec", "Execute command inside a container", Kontena::Cli::Containers::ExecCommand
-  subcommand "inspect", "Inspect the container", Kontena::Cli::Containers::InspectCommand
+  subcommand "exec", "Execute command inside a container", load_subcommand('containers/exec_command')
+  subcommand "inspect", "Inspect the container", load_subcommand('containers/inspect_command')
 
   def execute
   end

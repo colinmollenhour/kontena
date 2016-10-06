@@ -1,16 +1,11 @@
-require_relative 'vault/write_command'
-require_relative 'vault/list_command'
-require_relative 'vault/read_command'
-require_relative 'vault/remove_command'
-require_relative 'vault/update_command'
 
 class Kontena::Cli::VaultCommand < Kontena::Command
 
-  subcommand ["list", "ls"], "List secrets", Kontena::Cli::Vault::ListCommand
-  subcommand "write", "Write a secret", Kontena::Cli::Vault::WriteCommand
-  subcommand "read", "Read secret", Kontena::Cli::Vault::ReadCommand
-  subcommand "update", "Update secret", Kontena::Cli::Vault::UpdateCommand
-  subcommand ["remove", "rm"], "Remove secret", Kontena::Cli::Vault::RemoveCommand
+  subcommand ["list", "ls"], "List secrets", load_subcommand('vault/list_command')
+  subcommand "write", "Write a secret", load_subcommand('vault/write_command')
+  subcommand "read", "Read secret", load_subcommand('vault/read_command')
+  subcommand "update", "Update secret", load_subcommand('vault/update_command')
+  subcommand ["remove", "rm"], "Remove secret", load_subcommand('vault/remove_command')
 
   def execute
   end
