@@ -39,14 +39,18 @@ module Kontena
         puts "You don't seem to be logged in to Kontena Cloud"
         puts
         Kontena.run("cloud login --verbose")
-        cloud_client.authentication_ok?(kontena_account.userinfo_endpoint)
+        Retriable.retriable do
+          cloud_client.authentication_ok?(kontena_account.userinfo_endpoint)
+        end
       end
 
       def create_cloud_master
         master_id = nil
         begin
           spinner "Registering a new master '#{command.name}' to Kontena Cloud" do
-            master_id = Kontena.run("cloud master add --return #{command.name}", returning: :result)
+            Retriable.retriable do
+              master_id = Kontena.run("cloud master add --return #{command.name}", returning: :result)
+            end
           end
         rescue SystemExit
         end

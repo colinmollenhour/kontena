@@ -32,4 +32,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "dry-monads", "0.1.1"
   spec.add_runtime_dependency "dry-logic", "0.3.0"
   spec.add_runtime_dependency "launchy", "~> 2.4.3"
+  spec.add_runtime_dependency "retriable", "~> 2.1.0"
 end
